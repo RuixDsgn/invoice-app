@@ -6,6 +6,8 @@ from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from app import app
 
+from models import db, Instructor, School, Record, Invoice
+
 app.config["JWT_SECRET_KEY"] = 'dullescythe'
 jwt = JWTManager(app)
 
@@ -19,6 +21,12 @@ def register():
     email = request.json.get('email')
 
     hashed_password =  hashed_password(password)
+
+    print(f"Received registration data: username={username}, password={password}, name={name}, email={email}")
+
+    new_instructor = Instructor(username=username, password=hashed_password, name=name, email=email)
+    db.session.add(new_instructor)
+    db.session.commit()
 
 @app.route('/login', methods=['POST'])
 def login():
